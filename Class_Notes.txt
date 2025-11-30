@@ -413,3 +413,327 @@ Next :::
 		
 		- Install Python on Local Machine 
 		
+
+
+####################
+Day2: 30th Nov. 2025
+####################		
+	
+	MLOps Lifecycle :
+	
+	MLOps Usecase :
+	
+	Versioning :
+		
+		Version Control System using Git :
+		
+		Git Demo :
+		
+	ML Project and Packaging ML Model 
+	
+	CICD Pipeline:
+	
+		- SCM_Checkout 	==> VCS ?
+		- Application Build
+		- Create Application Artifacts 
+		- Test 
+		- Deploy 
+		
+		
+	How to Implement MLOps :::
+
+	
+		- Data Engineers		-> Prepare the Source Datasets 
+		
+		- Data Scientists 		->  Explore the datasets, analyse, check the feasibility of datasets 
+									Perform the training, tuning, and evaluate the Model
+		
+		- ML Engineers 			-> Deploy the ML Models to prod -> MLOps Strageies CICD, define best practises
+									Should have MLOps Knowledge
+		
+		- Business Stakeholders -> Bring business values using this ML Models 
+		
+		- Data Security/Governance Team  --> To Ensure data security & Governance, data privacy
+		
+		
+	ML Model Use Case :
+	
+		ML Model for Product Reviews :
+		
+		E_Commerce Application Eg. www.amazon.com
+		
+		Product Review:
+		
+		
+	CICD Pipeline:										
+		- SCM_Checkout 	==> VCS ?							 
+		- Application Build
+		- Create Application Artifacts 
+		- Test 
+		- Deploy 		
+		
+
+	Process/Lifecycle of Machine Learning Ops:::
+	
+		- Data Preparation 
+
+		- Exploratory Data Analysis (EDA)
+		
+		- Feature Engineering
+		
+		- Model Training 
+		
+		- Model Validations 
+		
+		- Model Deployment 
+		
+		- Monitoring
+		
+	MLOps Use cases:
+
+
+		- Healthcare 
+		- Finance 
+		- Retail Domain - E_Commerce
+		- Manufacturing 
+		
+		
+		
+	How to Implement MLOps :::
+	
+	- Vesioning:
+	
+	Version Control System :
+	
+		- To Version Control the Changes 
+		- To Track the Changes
+		
+	Types of VCS :
+	
+		- Centralized VCS:
+		
+		- Distributed VCS:
+		
+		GIT :
+		
+			- Git is an Open-Source Distributed VCS 
+			- To Version Control the Changes 
+			- To Track the Changes 
+			- To perform Parallel Development using Branching Techniques
+			
+	
+	
+
+	Lab Requirements:
+	
+		- Create GitHub Account 
+		
+				- https://github.com/
+		
+		- Install Git Client on Local Machine 
+		
+				- https://git-scm.com/install/windows
+				- https://git-scm.com/install/mac
+				
+			- Windows OS :
+				- Git Bash
+				- Git CMD 
+				- Git GUI 
+				
+			- Linux/Mac OS : 
+				- Terminal 
+				
+				git --version
+
+
+	Git - Client install on Local Machine 
+	
+	Github - Remote Repository Server
+	
+
+	Working with Git :::
+	
+	
+	Local Git Repository															Remote Git Repository
+	
+	
+	
+
+	
+	Tracking/Versioning ?
+	
+	
+	*.py 
+	
+	asdfasdf
+	dfasdf
+	asdfasdfasd
+	----shion
+	
+	save myMLApp1.py		===> myMLApp1.py_v1.0
+	
+	save myMLApp1.py		===> myMLApp1.py_v1.1
+	
+	save myMLApp1.py		===> myMLApp1.py_v1.2
+
+	save myMLApp1.py		===> myMLApp1.py_v1.3
+	
+	save myMLApp1.py		===> myMLApp1.py_v1.4		Latest version (Tag/Version_Number/Commit_ID)
+	
+	
+	Git File Workflow :::
+
+	Local Machine 																			Remote Server 
+	
+	Install git client 																			Github/AzRepo/gitlab
+	
+	Working_Directory 				Staging_Area 				Local_Repository				  Remote_Repsitory 
+	
+	 myMLApp1.py	 --------------> myMLApp1.py --------------> myMLApp1.py_v1.0 ----------------> myMLApp1.py_v1.0
+						git add 					git commit						  git push
+						
+	 myMLApp1.py	 --------------> myMLApp1.py --------------> myMLApp1.py_v1.1 ----------------> myMLApp1.py_v1.1
+						git add 					git commit						  git push
+	
+	
+
+
+	Developer's Workload :
+	
+		Types of Projects:
+
+			- Enhancement/Bugfix 
+			- New Project 
+			
+	
+	Git Cli Commands :
+	
+	
+	git --version
+	
+	
+	git clone 		:	To Clone/Copy the entire Remote Repository to Local Machine 
+	
+	git add 		:	To add the changes from Working Directory to Staging_Area
+	
+	git commit 		:	To commit the changes from Staging_Area to Local Repository
+	
+	git push 		:	To Push the Changes from Local Repository to Remote Repository
+	
+	git pull/Fetch 
+		
+		- Both git pull & git fetch are used to handle the incremental changes from Remote Repository
+		
+		- git Fetch :	
+			To just check the incremental changes from remote repository. If any incremental changes exist, it will update the incremental changes only in the Local Repository. Not in the Working Directory.
+
+		- git pull 	:
+			Check the incremental changes from remote repository. If any incremental changes exist, it will update the incremental changes in the Local Repository as well in the Working Directory.
+
+			As a best practise, always it is recommended to use git pull to keep the local repo in-sync with remote repository
+
+				git pull = git fetch + git merge!
+	
+	git init 		:	To initialize a local git repository
+						It will create a .git directory in the project workspace
+						It will create a default branch called master/main
+			
+			
+	Fork 			: 	To copy/backup a entire remote repository to another remote repository
+
+
+
+	Work with Cli Commands :::
+	
+	Organize the WorkSpace :::
+	
+		cd d:
+
+		mkdir MLProjects 
+		
+		cd MLProjects
+		
+		mkdir MLRepo1			# Workspace 
+		
+		mkdir MLRepo2
+		
+		cd MLRepo1
+			git init 
+	
+	
+		
+	Local Machine 															
+															
+	
+	Working_Directory 			Staging_Area 				Local_Repositor
+	
+	 file1.txt	 --------------> file1.txt --------------> file1.txt
+					git add					git commit				
+	
+	
+	
+	git status			:	To Get the status of repository
+
+	
+
+	Git Configuration ::::
+	
+		As a best practise, using git global config to setup the user name and email after initializing the first local repository.
+		
+		Global Configuration:				# Applicable to all the Repositories
+		
+			git config --global user.name "LoksaiETA"
+			
+			git config --global user.email "loksai@asdf.com"
+
+			git config --global --list
+		
+		Local Configuration:				# Applicable to a specific Repository
+	
+			git config user.name "LoksaiETA"
+			
+			git config user.email "loksai@asdf.com"	
+			
+			git config --list 
+		
+		
+	git add ::::	
+	
+		git add file1.txt 
+
+		git add file1.txt file2.txt
+		
+		git add *.doc 
+		
+		git add .							# . to select all files 
+		
+
+
+	git rm --cached 'file1.txt' 			# Unstage a file, the file changes will be back to working directory.
+	
+	git rm -f 'file1.txt' 					# Permantly Unstage and a delete a file from working directory.
+
+
+Next :::
+		
+		
+		- Git Reset / Revert 
+		
+		- Git Branches 
+		
+		- Git Branching Strategies
+				
+		- Git rebase / Merge
+		
+		- Git Remote Repositories Handling 		
+		
+		- Create AWS Free Tier Account 
+		
+		- Create DockerHub Account 
+		
+		- Install Visual Studio Code on Local Machine 
+		
+		- Install Python on Local Machine 
+		
+				
+				
