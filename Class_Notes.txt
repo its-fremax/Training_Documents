@@ -2580,8 +2580,647 @@ Okay product but slow response,neutral
 Loved the design and usability,positive
 Disappointed with the overall experience,negative
 	
+
+
 	
 	
+#####################
+Day-9: 3rd Jan. 2026
+#####################
+
+	- Continuous Monitoring :
+	
+		- Various Tools and Services for ML Monitoring
+			- MLflow 
+			- Prometheus & Grafana 
+				- Prometheus 	==> Monitoring Tool 
+				- Grafana 		==> Visualization Tool 
+			
+				-> K3s - Kubernetes pods, Nodes, API Monitoring 
+				
+				
+		- Monitoring Tools Architecture :::
+		
+
+			
+			
+	- Kubernetes Cluster
+			
+		- To Setup Prometheus & Grafana using Helm
+		
+		zero-down-time
+		
+		
+		K3s Installation & Configuration ::::
+		
+		
+		Using Helm - to To Setup Prometheus & Grafana
+		
+			- Helm is a package manager for Kubernetes
+		
+		
+		
+	- Kubeflow for Kubernetes :::
+	
+		
+
+	- git,github,dvc,s3,iam,mlflow,docker,dockerhub,fast api,streamlit,kubernetes,github-actions,prometheus,Grafana,kubeflow
+	- AWS Sagemaker.
+			
+			- sentiment analyzer 
+			
+
+			
+#####################
+Day-10: 4th Jan. 2026
+#####################			
+			
+	MLOps on Cloud ::
+	
+		- AWS / Azuure 
+		
+			- AWS Sagemaker!
+			
+			
+			- AWS Cli for Sagemaker Project ::::
+			
+
+
+Project: 
+
+Snapshot of the Source Code -> train.py 
+API Web Page 
+UI Web Page 
+DVC Pipeline 
+Prometheus & Grafana 
+github-action workflow 
+	- Setup the Self-Hosted Runner(K3s) to deploy the model 
+	- Setup the Secrets 
+
+
+
+PROJECT STRUCTURE (Best Practice)
+
+mlops-e2e/
+├── data/
+│   ├── raw/
+│   │   └── reviews.csv        # NOT tracked by Git
+│   └── processed/
+│       └── clean.csv          # DVC output
+│
+├── models/
+│   └── model.pkl              # DVC output
+│
+├── src/
+│   ├── data_validation.py
+│   ├── preprocessing.py
+│   └── train.py
+│
+├── api/
+│   └── main.py
+│
+├── ui/
+│   └── app.py
+│
+├── dvc.yaml
+├── requirements.txt
+└── .gitignore
+	
+
+
+🧱 1️⃣ High-Level End-to-End MLOps Architecture
+┌────────────┐
+│   Developer│
+│ (Local PC) │
+└─────┬──────┘
+      │ git push
+      ▼
+┌────────────────────┐
+│     GitHub Repo    │
+│  (Code + DVC meta) │
+└─────┬──────────────┘
+      │
+      │ GitHub Actions (CI/CD)
+      ▼
+┌──────────────────────────────┐
+│        CI PIPELINE           │
+│  - Tests                     │
+│  - Train Model               │
+│  - Log to MLflow             │
+│  - Build Docker Images       │
+│  - Push to DockerHub         │
+└─────┬────────────────────────┘
+      │
+      ▼
+┌──────────────────────┐
+│   Kubernetes Cluster │
+│   (EC2 / kubeadm)    │
+└──────────────────────┘
+
+🧪 2️⃣ Training + Data Versioning Architecture (DVC + MLflow)
+           ┌───────────────┐
+           │  Raw Dataset  │
+           │ (CSV)         │
+           └──────┬────────┘
+                  │ dvc add
+                  ▼
+           ┌────────────────┐
+           │   DVC Metadata │
+           │  (.dvc files)  │
+           └──────┬─────────┘
+                  │ dvc push
+                  ▼
+        ┌──────────────────────┐
+        │        AWS S3        │
+        │ (Raw / Processed /   │
+        │  Model Artifacts)    │
+        └──────────────────────┘
+
+                  ▲
+                  │
+┌─────────────────┴─────────────────┐
+│           Training Code           │
+│  - preprocessing.py               │
+│  - train.py                       │
+│                                   │
+│  Logs → MLflow Tracking Server    │
+└─────────────────┬─────────────────┘
+                  │
+                  ▼
+        ┌──────────────────────┐
+        │   MLflow Registry    │
+        │  sentiment-model     │
+        │  v1 → v2 → v3        │
+        │  Staging / Prod      │
+        └──────────────────────┘
+
+
+✅ Key idea
+
+DVC → data & model storage
+
+MLflow → model lifecycle
+
+🚀 3️⃣ CI/CD Architecture (GitHub Actions → Docker → Kubernetes)
+┌──────────────────────────┐
+│      GitHub Actions      │
+│                          │
+│  Job 1: CI               │
+│   - Lint                 │
+│   - Unit tests           │
+│                          │
+│  Job 2: Build            │
+│   - Docker API image     │
+│   - Docker UI image      │
+│                          │
+│  Job 3: Push             │
+│   - DockerHub            │
+│                          │
+│  Job 4: Deploy           │
+│   - kubectl apply        │
+└─────────────┬────────────┘
+              │
+              ▼
+     ┌───────────────────┐
+     │    DockerHub      │
+     │ api:latest        │
+     │ ui:latest         │
+     └─────────┬─────────┘
+               │
+               ▼
+     ┌────────────────────────┐
+     │   Kubernetes Cluster   │
+     │                        │
+     │  API Deployment        │
+     │  UI Deployment         │
+     └────────────────────────┘
+
+☸️ 4️⃣ Kubernetes Runtime Architecture (Pods, Services, Networking)
+                   ┌───────────────┐
+                   │   User / Web  │
+                   └──────┬────────┘
+                          │
+                     NodePort / LB
+                          │
+         ┌────────────────┴────────────────┐
+         │           Kubernetes            │
+         │                                 │
+         │  ┌────────────┐   ┌───────────┐ │
+         │  │ Streamlit  │   │ FastAPI   │ │
+         │  │ UI Pod     │──▶│ API Pod   │ │
+         │  └────────────┘   └─────┬─────┘ │
+         │                           │
+         │                    Load Model
+         │                           │
+         │                    ┌──────▼──────┐
+         │                    │  MLflow     │
+         │                    │  Registry   │
+         │                    └──────┬──────┘
+         │                           │
+         │                    ┌──────▼──────┐
+         │                    │     S3      │
+         │                    │ Model/Data  │
+         │                    └─────────────┘
+         └──────────────────────────────────┘
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+📊 5️⃣ Monitoring Architecture (Prometheus + Grafana)
+┌──────────────┐
+│   FastAPI    │
+│ /metrics     │
+└──────┬───────┘
+       │ scrape
+       ▼
+┌──────────────────┐
+│   Prometheus     │
+│  - Latency       │
+│  - Error rate    │
+│  - Throughput    │
+└──────┬───────────┘
+       │
+       ▼
+┌──────────────────┐
+│    Grafana       │
+│  Dashboards      │
+│  Alerts          │
+└──────────────────┘
+
+
+Git → GitHub Actions → DockerHub → Kubernetes
+            ↓
+         Training
+            ↓
+        MLflow Registry
+            ↓
+      Production Model
+            ↓
+        FastAPI API
+            ↓
+        Streamlit UI
+            ↓
+     Prometheus → Grafana
+	 
+				
+			
+🔹 STEP 1: Create AWS Account & Setup
+1. Create AWS Account
+
+Sign up at AWS
+
+Enable free tier
+
+2. Create IAM User (IMPORTANT)
+
+Do not use root account.
+
+IAM → Users → Create user
+
+Access type: Programmatic + Console
+
+Attach policies:
+
+AmazonSageMakerFullAccess
+
+AmazonS3FullAccess
+
+CloudWatchFullAccess
+
+Save:
+
+Access Key
+
+Secret Key
+
+🔹 STEP 2: Open SageMaker Studio (First Time)
+
+Go to AWS Console → SageMaker
+
+Click Studio → Set up SageMaker Studio
+
+Choose:
+
+Domain name: sagemaker-demo
+
+Auth: IAM
+
+Create User Profile
+
+Launch SageMaker Studio
+
+⏱️ Takes ~5–10 minutes first time
+
+🔹 STEP 3: Understand SageMaker Components (Very Important)
+Component	Purpose
+Studio	IDE (Jupyter, terminals)
+Notebook	Write & train ML models
+S3	Store datasets & models
+Training Job	Runs training
+Endpoint	Deploy model for inference
+
+👉 SageMaker = Managed ML lifecycle
+
+🔹 STEP 4: Create Your First Notebook
+
+Open SageMaker Studio
+
+Click Notebooks → Python 3 (Data Science)
+
+Create notebook:
+01_basic_sagemaker.ipynb
+
+🔹 STEP 5: Upload Dataset to S3
+Example: Iris Dataset
+import pandas as pd
+
+url = "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv"
+df = pd.read_csv(url)
+
+df.head()
+
+Upload to S3
+import sagemaker
+import boto3
+
+session = sagemaker.Session()
+bucket = session.default_bucket()
+
+df.to_csv("iris.csv", index=False)
+session.upload_data("iris.csv", bucket=bucket, key_prefix="data")
+
+print("Uploaded to:", f"s3://{bucket}/data/iris.csv")
+
+🔹 STEP 6: Train Model Using Built-in SageMaker Algorithm
+Use XGBoost (Beginner Friendly)
+from sagemaker.inputs import TrainingInput
+from sagemaker.xgboost import XGBoost
+
+role = sagemaker.get_execution_role()
+
+xgb = XGBoost(
+    entry_point=None,
+    framework_version="1.5-1",
+    role=role,
+    instance_count=1,
+    instance_type="ml.m5.large",
+    output_path=f"s3://{bucket}/output",
+    hyperparameters={
+        "objective": "multi:softmax",
+        "num_class": 3,
+        "max_depth": 5,
+        "eta": 0.2,
+        "num_round": 100
+    }
+)
+
+train_input = TrainingInput(
+    s3_data=f"s3://{bucket}/data/iris.csv",
+    content_type="csv"
+)
+
+xgb.fit({"train": train_input})
+
+
+✔ SageMaker creates:
+
+Training container
+
+Logs in CloudWatch
+
+Model artifact in S3
+
+🔹 STEP 7: Deploy Model (Real Inference)
+predictor = xgb.deploy(
+    initial_instance_count=1,
+    instance_type="ml.m5.large"
+)
+
+Test Prediction
+import numpy as np
+
+sample = np.array([[5.1, 3.5, 1.4, 0.2]])
+predictor.predict(sample)
+
+
+🎉 You just deployed a real ML API
+
+🔹 STEP 8: Clean Up (Very Important 💸)
+
+Always delete resources!
+
+predictor.delete_endpoint()
+
+
+Also:
+
+Stop notebook instance
+
+Delete unused S3 files
+
+🔹 STEP 9: Train Using Your Own Script (Intermediate)
+
+Create file train.py
+
+import pandas as pd
+from sklearn.ensemble import RandomForestClassifier
+import joblib
+
+df = pd.read_csv("/opt/ml/input/data/train/iris.csv")
+
+X = df.iloc[:, :-1]
+y = df.iloc[:, -1]
+
+model = RandomForestClassifier()
+model.fit(X, y)
+
+joblib.dump(model, "/opt/ml/model/model.joblib")
+
+
+Then train using Script Mode
+(this is how real projects work).
+
+🔹 STEP 10: Real-World SageMaker Flow (Must Know)
+Local Dev
+   ↓
+S3 (data)
+   ↓
+Training Job
+   ↓
+Model Artifacts (S3)
+   ↓
+Endpoint
+			
+			
+			
+🔹 What Kubeflow Is (and Why It Fits)
+
+Kubeflow is an open-source MLOps platform built on Kubernetes that supports:
+
+Defining and orchestrating ML pipelines (data preprocess → train → evaluate → deploy).
+Kubeflow
+
+Running containerized jobs at each step via Kubernetes.
+Medium
+
+Auto-scaling, experiment tracking, artifact logging, model serving (via KServe), hyperparameter tuning (via Katib), etc.
+Kubeflow
+
+Because your repository already has:
+✔ Kubernetes manifests under k8s/
+✔ Docker setup (docker/)
+✔ ML code and scripts (src/, models/)
+✔ DVC/MLflow tracking — common for MLOps workflows
+
+…these can be adapted to Kubeflow Pipelines by turning various project steps into Kubeflow pipeline components.
+
+🔹 How You Would Deploy This with Kubeflow
+✅ 1. Containerize Each Step
+
+Kubeflow Pipelines runs each pipeline step as a container on Kubernetes.
+Your existing Dockerfiles can be used for:
+
+Data preprocessing
+
+Model training
+
+Evaluation
+
+Deployment packaging
+
+So you’d wrap each stage as a Kubeflow component (simple Python + KFP SDK).
+Medium
+
+✅ 2. Define a Kubeflow Pipeline
+
+Use the Kubeflow Pipelines SDK to write a Python pipeline that:
+
+@dsl.pipeline(...)
+def mlops_pipeline(...):
+    preprocess = preprocess_op(...)
+    train = train_op(...).after(preprocess)
+    eval = eval_op(...).after(train)
+
+
+This pipeline orchestrates your project’s steps in sequence, just like existing scripts or CI/CD workflows do.
+Medium
+
+✅ 3. Run on Kubernetes With Kubeflow Installed
+
+Once Kubeflow is installed on your Kubernetes cluster (e.g., Minikube, EKS, GKE, AKS, on-prem etc.), you can:
+
+Upload and run your pipeline via the Kubeflow UI
+
+Watch pipeline runs and artifacts
+
+Scale resources automatically
+
+Kubeflow Pipelines will handle scheduling on Kubernetes.
+Kubeflow
+
+✅ 4. Optional Enhancements
+
+You can extend with:
+
+KServe (for scalable model serving)
+
+Katib (for hyperparameter tuning)
+
+Notebooks (for model exploration inside the cluster)
+
+All are supported Kubeflow components.
+Kubeflow
+
+🔹 What Kubeflow Does Not Do Automatically
+
+Kubeflow is powerful, but it doesn’t magically automate your entire project without rewriting workflow logic:
+
+❌ It won’t read your current scripts and auto-convert them. You need to define the pipeline components.
+❌ It won’t replace MLflow experiment tracking unless you integrate MLflow in your components.
+❌ It won’t eliminate the need for Kubernetes expertise. Kubeflow runs on Kubernetes.
+
+🧠 Recommendation Summary
+Goal	Possible with Kubeflow?
+Orchestrate ML steps on Kubernetes	✅
+Track experiments & artifacts	Yes, but you may use Kubeflow metadata + MLflow (hybrid)
+Deploy models to production	Yes, via KServe + Kubeflow Pipeline steps
+Use current Docker and k8s configs	Reuse them as part of Kubeflow components
+📌 Bottom Line
+
+✅ Yes — you can deploy that project using Kubeflow’s MLOps platform.
+💡 You’ll convert your existing workflow into Kubeflow pipeline components and run them on Kubernetes with Kubeflow installed.
+🛠 You’ll reuse your Docker images and scripts but wrap them with the Kubeflow Pipeline SDK for orchestration.
+Kubeflow
+
+
+🟢 STEP 1: Install k3s
+
+Run on Ubuntu (local VM or EC2)
+
+curl -sfL https://get.k3s.io | sh -
+
+
+Check:
+
+kubectl get nodes
+
+
+Expected:
+
+STATUS   Ready
+
+🟢 STEP 2: Install Kubeflow Pipelines (Standalone)
+
+We install ONLY Kubeflow Pipelines, not full Kubeflow (simpler & lighter).
+
+export PIPELINE_VERSION=2.0.5
+
+kubectl apply -k "github.com/kubeflow/pipelines/manifests/kustomize/env/platform-agnostic?ref=${PIPELINE_VERSION}"
+
+
+Wait:
+
+kubectl get pods -n kubeflow
+
+
+All pods should be Running.
+
+🟢 STEP 3: Access Kubeflow UI
+kubectl port-forward -n kubeflow svc/ml-pipeline-ui 8080:80
+
+
+Open browser:
+
+http://localhost:8080
+
+
+You should see Kubeflow Pipelines UI 🎉
+
+
+
+		
+		
+	
+	
+	
+	
+	
+		
 	
 	
 	
